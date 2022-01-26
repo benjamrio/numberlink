@@ -19,9 +19,13 @@ public class Grid {
 		}
 	}
 	
-	public void startPath(int i, int j) {
+	
+	//commence ou continue un path à partir du click, si cela est possible
+	//retourne si c'est possible
+
+	public boolean startPath(int i, int j) {
 		Cell selectedCell = cells[i][j];
-		End selectedEnd = selectedCell.getEnd();
+		startPathAtCell(selectedCell);
 		
 		//Si on a bien sélectionné une case correspondant à une end
 		if (selectedEnd != null) {
@@ -34,16 +38,20 @@ public class Grid {
 			else {
 				new Path(selectedCell);
 			}
+			return true;
 		} 
 		else {
 			Path path = selectedCell.getPath();
 			
 			//si la cell cliqué correspond à un path, on abandonne les cells "futures"
-			if {path != null} {
+			if (path != null) {
 				path.cutAt(selectedCell);
+				return true;
 			}
+			return false;
 		}
 	}
+	
 	
 	public int[] getPosition(Cell cell) {
 		for (int i = 0; i < nbLines; i++ ){

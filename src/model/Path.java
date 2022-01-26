@@ -1,4 +1,3 @@
-package flow.model;
 import java.util.ArrayList;
 
 
@@ -12,97 +11,81 @@ public class Path {
 	
 	private ArrayList<Cell> occupiedCells;
 	
-	
-	
-	
-
-	
-	
 	//Constructeur
-	public Path(Cell firstCell){
-		
-		
+	public Path(Cell firstCell){	
 		this.occupiedCells = new ArrayList<Cell>();
 		occupiedCells.add(firstCell);
 		this.tag = firstCell.getEnd().getTag();
 	}
 	
 	//On regarde si la ligne est finie pour quantifier l'avancement dans le niveau 
-	public boolean isEnd(Cell nextCell) {
-		if (tag.extrimity1 != occupiedCells[0] ) {
-			return nextCell == tag.end1;
-		}
-		if (tag.extrimity2 != occupiedCells[0] ) {
-			return nextCell == tag.end2;
-		}
-	
+	public boolean isComplete() {
+		int size = occupiedCells.size();
+		boolean boolean1 = occupiedCells.get(0) == tag.getEnds()[0] && occupiedCells.get(size) == tag.getEnds()[1];
+		boolean boolean2 = occupiedCells.get(0) == tag.getEnds()[1] && occupiedCells.get(size) == tag.getEnds()[0];
+		return boolean1 || boolean2; 
+		
 	}
 	
 	
-	//Méthode principale, pour répondre à la demande du contrôleur.
-	public void addCellToPath(Direction direction) {
+	//pour répondre à la demande du contrôleur.
+	public boolean MoveDir(Direction direction) {
 		//Si la ligne n'est pas finie, la case cherche sa voisine dans la direction demandée
-			Cell currentCell = occupiedCells[occupiedCells.size()-1]
-			Grid grid = occupiedCells[0].getGrid()
-			Cell neighbourCell = grid.getNeighbour(currentCell,direction)
+			Cell currentCell = occupiedCells.get(occupiedCells.size()-1);
+			Grid grid = occupiedCells.get(0).getGrid();
+			Cell neighbourCell = grid.getNeighbour(currentCell,direction);
 			
-			
-			if (neighbourCell != null) {
-				if (neighbourCell.getEnd() != null || ==neighbourCell)
-					
-					
-					
-					
-					if (neighbourCell == null) {
-				//Cas où l'on va terminer la ligne
-				if (voisine.aUneExtremite() && voisine.getExtremite()==extremiteArrivee){
-					this.extremiteCourante=voisine;
-					addDirection(direction);
-					addCase(voisine);				
+			//cell dans grid
+			if (neighbourCell != null) { 
+				boolean isAdded = neighbourCell.addToPath(this);
+				//cell pas end d'un autre path ou celui du début
+				if (isAdded) {
+					addCell(neighbourCell);
+					return true;
 				}
 				
-				//Cas général où on prolonge la ligne sur une case vide
-				else if (voisine.estLibre()){
-					addDirection(direction);
-					addCase(voisine);
-					this.extremiteCourante=voisine;
-					//On informe la case qu'elle devient occupée
-					voisine.setLigne(this);
-				}
-				}
-			}
+					
+					
+					
+					
 		
+				
+		
+		}
+			
+	
+	
+	
 	
 	
 	//Gestion des cases occupées et directions utilisées
-	public void addCase(Case nouvelleCase) {
-		this.occupiedCells.add(nouvelleCase);
+	public void addCell(Cell newCell) {
+		this.occupiedCells.add(newCell);
 	}
 	
-	public 
-
 	//"Nettoyage" de la ligne, si on la reprend de 0
 	public void clearPath() {
-		for (Cell emptyCell : occupiedCells) {
+		for (Cell cell : occupiedCells) {
 			//On signale aux cases qu'on les vide
-			emptyCell.setPath(null);
+			cell.setPath(null);
 		}
 		occupiedCells.clear();	
-		
 	}
 	
 	public void cutPath(Cell collisionCell ) {
+	//ne pas appeler avec un first end
 		int numberOfCollision = 0; 
 		for (Cell cell : occupiedCells) {
-			if (collision Cell ==  cellOcuppied[numberOfCollision])
+			if (collisionCell ==  occupiedCells.get(numberOfCollision)) {
 				break; 
-			numberOfCollision = numbeOfCollision + 1; 
+			}
+			numberOfCollision ++; 
 		}
-		for (Cell emptyCell : occupiedCells.subList(numberOfCollision,occupiedCells[occupiedCells.size()])) {
+		for (Cell emptyCell : new ArrayList<Cell>(occupiedCells.subList(numberOfCollision, occupiedCells.size()))) {
 			//On signale aux cells qu'on les vide
 			emptyCell.setPath(null);
 		}
-		this.occupiedCells = occupiedCells.subList(0,numberOfCollision - 1); 
+		this.occupiedCells = new ArrayList<Cell>(occupiedCells.subList(0, numberOfCollision-1)); 
 	}
 		
 	
@@ -112,24 +95,24 @@ public class Path {
 	}
 
 	public Cell getFutureLastCell() {
-		return occupiedCells[0]; 
+		if (occupiedCells.get(0) == tag.getEnds()[0]) {
+			return tag.getEnds()[1];				
+		};
+		return tag.getEnds()[0];
+	}
+	public Cell getLastCell() {
+		return occupiedCells.get(occupiedCells).size()-1); 
 	}
 	
 	public Cell getFirstCell() {
-		return occupiedCells[0];
+		return occupiedCells.get(0);
 	}
 	
-	public void setEnd1(Cell cell)
+	public void setStart(Cell cell) {
 		this.clearPath(); 
-		this.occupiedCells[0] = cell;
+		occupiedCells.set(0, cell);
+		}
 				
 	
-
-	
-	
-
-	
-
-		
-	
+	}
 	

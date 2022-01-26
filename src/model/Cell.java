@@ -1,5 +1,3 @@
-package model;
-
 import model.Path;
 import model.Grid;
 import model.End;
@@ -39,3 +37,12 @@ public class Cell {
 	
 	
 }
+
+	public boolean addToPath(Path path) {
+		Cell lastCell = path.getLastCell(); 
+		if (lastCell.getEnd() == null ) {
+			return true;
+		}
+		else if ()
+	
+	}

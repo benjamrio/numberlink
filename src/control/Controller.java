@@ -3,6 +3,7 @@ package control;
 import java.util.ArrayList;
 
 import model.Cell;
+import model.Direction;
 import model.Grid;
 import model.Path;
 import model.Tag;
@@ -15,28 +16,20 @@ public class Controller{
 	private int nbLines = 5, nbCols = 5;
 	
 	public Controller(){
-		this.myGrid = new Grid(nbLines, nbCols);
+		this.grid = new Grid(nbLines, nbCols);
 	}
 	
-	public int[] selectCell(int line, int col) {
-		grid.startPath(line, col);
+	public boolean selectCell(int line, int col) {
+		return (grid.startPath(line, col));
 		
-		currentPath = clickedCell.getPath();
-		currentPath.clearPath();
-		
-		
-		else currentPath = null;
-		
-		System.out.println(ligneCourante);
-		return new int[] {ligne, colonne};
 	}
 
-	@Override
-	public boolean action(Direction direction) {
+
+	public boolean action(Direction dir) {
 		if (currentPath != null) {
 			System.out.println("flèche" + direction.name());
 			System.out.println("Ligne courante : " + currentPath.getTag());
-			currentPath.addCellToPath(direction);
+			currentPath.moveDir(Direction dir);
 		}
 		
 		//Le booléen res sert à évaluer si le tableau est complet ou non
