@@ -1,6 +1,7 @@
 package model;
 import model.Cell;
-
+import control.Controller;
+import control.Direction;
 public class Grid {
 	private int nbLines;
 	private int nbCols;
@@ -21,38 +22,15 @@ public class Grid {
 	
 	
 	//commence ou continue un path à partir du click, si cela est possible
-	//retourne si c'est possible
-
-	public boolean startPath(int i, int j) {
+	//retourne le current path si c'est possible (selection d'un end ou click sur une case avec un path)
+	public Path startPath(int i, int j) {
+		//check si i et j sont bien dans les dims de la grille
 		Cell selectedCell = cells[i][j];
-		startPathAtCell(selectedCell);
-		
-		//Si on a bien sélectionné une case correspondant à une end
-		if (selectedEnd != null) {
-			Path selectedPath = selectedEnd.getTag().getPath();
-
-			//Si le end clické correspond à une tag avec un path déjà instantisé
-			if (selectedPath != null) {
-				selectedPath.setStart(selectedEnd);
-			}
-			else {
-				new Path(selectedCell);
-			}
-			return true;
-		} 
-		else {
-			Path path = selectedCell.getPath();
-			
-			//si la cell cliqué correspond à un path, on abandonne les cells "futures"
-			if (path != null) {
-				path.cutAt(selectedCell);
-				return true;
-			}
-			return false;
-		}
+		Path path = selectedCell.startPathAtCell();
+		return path;
 	}
 	
-	
+	//cherche la cellule dans la grille
 	public int[] getPosition(Cell cell) {
 		for (int i = 0; i < nbLines; i++ ){
 			for (int j = 0; j<nbCols; j++) {
@@ -64,6 +42,7 @@ public class Grid {
 		throw new RuntimeException("Cell not in grid");
 	}
 	
+	
 	public Cell getNeighbourCell(Cell cell, Direction direction) {
 		int[] coord = getPosition(cell);
 		int i = coord[0], j = coord[1];
@@ -74,13 +53,18 @@ public class Grid {
 			case LEFT : j=j-1; break;
 			default : break;
 		}
+		Cell nextCell = cells[i][j];
+		//vérification de l'intégrité géométrique (dans la grille)
 		if (0<=i && i<nbLines && 0<=j && j<nbCols) {
-			return cells[i][j];
+			//vérification de l'intégrité sémantique (pas une end "interdite")
+			if (nextCell.isAllowedFrom(cell)) {
+				return nextCell;
+			} 
 		}
-		else {
-			return null;
-		}
+		return null;
 	}
+	
+	
 	
 	public Cell getCellAt(int i, int j) {
 		return cells[i][j];

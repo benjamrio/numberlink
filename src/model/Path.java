@@ -1,4 +1,8 @@
+package model;
+
 import java.util.ArrayList;
+
+import control.Direction;
 
 
 public class Path {
@@ -29,42 +33,32 @@ public class Path {
 	
 	
 	//pour répondre à la demande du contrôleur.
-	public boolean MoveDir(Direction direction) {
-		//Si la ligne n'est pas finie, la case cherche sa voisine dans la direction demandée
-			Cell currentCell = occupiedCells.get(occupiedCells.size()-1);
-			Grid grid = occupiedCells.get(0).getGrid();
-			Cell neighbourCell = grid.getNeighbour(currentCell,direction);
-			
-			//cell dans grid
-			if (neighbourCell != null) { 
-				boolean isAdded = neighbourCell.addToPath(this);
-				//cell pas end d'un autre path ou celui du début
-				if (isAdded) {
-					addCell(neighbourCell);
-					return true;
-				}
+	public boolean moveDir(Direction dir) {
+		Cell currentCell = occupiedCells.get(occupiedCells.size()-1);
+		Cell nextCell = currentCell.getNextCell(dir);
 				
-					
-					
-					
-					
-		
-				
-		
+		if (nextCell == null) {
+			return false;
+		} else {
+			occupiedCells.add(nextCell);
+			return true;
 		}
-			
-	
-	
-	
-	
+	}
+		
+	public Cell getFinishingCell() {
+		Cell firstCell = occupiedCells.get(0); //nécessairement un end
+		return firstCell.getOtherEndCell();
+	}
+		
 	
 	//Gestion des cases occupées et directions utilisées
 	public void addCell(Cell newCell) {
 		this.occupiedCells.add(newCell);
 	}
 	
+
 	//"Nettoyage" de la ligne, si on la reprend de 0
-	public void clearPath() {
+	public void clear() {
 		for (Cell cell : occupiedCells) {
 			//On signale aux cases qu'on les vide
 			cell.setPath(null);
@@ -72,24 +66,31 @@ public class Path {
 		occupiedCells.clear();	
 	}
 	
-	public void cutPath(Cell collisionCell ) {
-	//ne pas appeler avec un first end
-		int numberOfCollision = 0; 
-		for (Cell cell : occupiedCells) {
-			if (collisionCell ==  occupiedCells.get(numberOfCollision)) {
-				break; 
-			}
-			numberOfCollision ++; 
-		}
-		for (Cell emptyCell : new ArrayList<Cell>(occupiedCells.subList(numberOfCollision, occupiedCells.size()))) {
-			//On signale aux cells qu'on les vide
-			emptyCell.setPath(null);
-		}
-		this.occupiedCells = new ArrayList<Cell>(occupiedCells.subList(0, numberOfCollision-1)); 
-	}
-		
 	
-
+	
+	//coupe le path à partir d'une cell (incluse)
+	public void clearFrom(Cell cell) {
+		//compte le nombre de cells strictement avant la cellule à partir de laquelle on veut clear
+		int nbCellsBefore = 0;
+		for (Cell otherCell : occupiedCells) {
+			if (otherCell == cell) {
+				break;
+			}
+			nbCellsBefore ++;
+		}
+		
+		//puis on informe les cells de la suite du path qu'elles n'ont plus de path
+		for (Cell cellToEmpty : new ArrayList<Cell>(occupiedCells.subList(nbCellsBefore, occupiedCells.size()))){
+			cellToEmpty.setPath(null);
+		}
+		
+		//et on modifie la liste de cellules du path
+		this.occupiedCells = new ArrayList<Cell>(occupiedCells.subList(0, nbCellsBefore));
+	}
+	
+	public void tagComplete() {
+		tag.setIsComplete(true);
+	}
 	public ArrayList<Cell> getoccupiedCells() {
 		return occupiedCells;
 	}
@@ -100,8 +101,10 @@ public class Path {
 		};
 		return tag.getEnds()[0];
 	}
+	
+	
 	public Cell getLastCell() {
-		return occupiedCells.get(occupiedCells).size()-1); 
+		return occupiedCells.get(occupiedCells.size()-1); 
 	}
 	
 	public Cell getFirstCell() {
@@ -109,10 +112,14 @@ public class Path {
 	}
 	
 	public void setStart(Cell cell) {
-		this.clearPath(); 
+		this.clear(); 
 		occupiedCells.set(0, cell);
 		}
+
+	public Tag getTag() {
+		return tag;
+	}
 				
 	
-	}
+}
 	

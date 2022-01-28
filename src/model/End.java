@@ -1,18 +1,35 @@
 package model;
 
 public class End {
-	private String name;
+	
 	private Tag tag;
-	public String getName() {
-		return name;
+	private Cell cell; 
+
+ 
+	
+	public End(Cell cell,Tag tag) {
+		this.cell = cell; 
+		this.tag = tag; 
+		 
 	}
-	public void setName(String name) {
-		this.name = name;
+	
+	public End getOtherEnd() {
+		return tag.getOtherEnd(this);
+	}
+	
+	
+	public Path clearPathOfTag(){
+		tag.setIsComplete(false);
+		return tag.clearPath(); 
+	
 	}
 	public Tag getTag() {
 		return tag;
 	}
-	public void setTag(Tag tag) {
-		this.tag = tag;
+	
+	public Cell getCell() {
+		return cell;
 	}
+
+
 }

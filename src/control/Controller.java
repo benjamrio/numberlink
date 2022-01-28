@@ -3,7 +3,6 @@ package control;
 import java.util.ArrayList;
 
 import model.Cell;
-import model.Direction;
 import model.Grid;
 import model.Path;
 import model.Tag;
@@ -19,52 +18,20 @@ public class Controller{
 		this.grid = new Grid(nbLines, nbCols);
 	}
 	
-	public boolean selectCell(int line, int col) {
-		return (grid.startPath(line, col));
-		
+	
+	//selection de la case pour initier un path avec la souris, et affecte le current path au path sélectioné si il y en a un
+	public void selectCell(int line, int col) {
+		this.currentPath = grid.startPath(line, col);
 	}
 
 
 	public boolean action(Direction dir) {
 		if (currentPath != null) {
-			System.out.println("flèche" + direction.name());
+			System.out.println("Flèche" + dir.name());
 			System.out.println("Ligne courante : " + currentPath.getTag());
-			currentPath.moveDir(Direction dir);
-		}
-		
-		//Le booléen res sert à évaluer si le tableau est complet ou non
-		int nbLignesFinies = 0;
-		for (Couleur couleur : Couleur.class.getEnumConstants()) {
-			if (couleur.getLigne().estFinie()) ++nbLignesFinies;
-		};
-		if(nbLignesFinies==5) {
-			return true;
+			return currentPath.moveDir(dir);
 		}
 		return false;
 	}
-
-	@Override
-	public int getNbLignes() {
-		return this.monPlateau.getNbLignes();
-	}
-
-	@Override
-	public int getNbColonnes() {
-		return this.monPlateau.getNbColonnes();
-	}
-
-	@Override
-	public int[] getPositionExtremiteDepart(Couleur couleur) {
-		return couleur.getLigne().getExtremiteDepart().getMaPositionExtremite();
-	}
-
-	@Override
-	public int[] getPositionExtremiteArrivee(Couleur couleur) {
-		return couleur.getLigne().getExtremiteArrivee().getMaPositionExtremite();
-	}
-
-	@Override
-	public ArrayList<Direction> getDirections(Couleur couleur) {
-		return couleur.getDirections();
-	}
+	//si jamais l'action est vraie, l'état du modèle a changé. Sinon aucune modif à effectuer
 }
