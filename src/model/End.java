@@ -5,8 +5,6 @@ public class End {
 	private Tag tag;
 	private Cell cell; 
 
- 
-	
 	public End(Cell cell,Tag tag) {
 		this.cell = cell; 
 		this.tag = tag; 
@@ -17,18 +15,21 @@ public class End {
 		return tag.getOtherEnd(this);
 	}
 	
-	
 	public Path clearPathOfTag(){
-		tag.setIsComplete(false);
 		return tag.clearPath(); 
 	
 	}
+	
 	public Tag getTag() {
 		return tag;
 	}
 	
 	public Cell getCell() {
 		return cell;
+	}
+	
+	public void clearPath() {
+		cell.setPath(null);
 	}
 
 

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import control.Direction;
 
-
 public class Path {
 	private Tag tag;	
 	
@@ -21,7 +20,7 @@ public class Path {
 		occupiedCells.add(firstCell);
 		this.tag = firstCell.getEnd().getTag();
 	}
-	
+	/*
 	//On regarde si la ligne est finie pour quantifier l'avancement dans le niveau 
 	public boolean isComplete() {
 		int size = occupiedCells.size();
@@ -30,40 +29,42 @@ public class Path {
 		return boolean1 || boolean2; 
 		
 	}
-	
+*/	
 	
 	//pour répondre à la demande du contrôleur.
 	public boolean moveDir(Direction dir) {
-		Cell currentCell = occupiedCells.get(occupiedCells.size()-1);
-		Cell nextCell = currentCell.getNextCell(dir);
-				
-		if (nextCell == null) {
-			return false;
-		} else {
-			occupiedCells.add(nextCell);
-			return true;
+		if (!tag.getIsComplete()){
+			Cell currentCell = occupiedCells.get(occupiedCells.size()-1);
+			Cell nextCell = currentCell.getNextCell(dir);
+			if (nextCell != null) {
+				return nextCell.isTagComplete();
+			}
 		}
+		return false;
 	}
 		
+
 	public Cell getFinishingCell() {
+		//trouver la cell qui permet de finir le path
 		Cell firstCell = occupiedCells.get(0); //nécessairement un end
 		return firstCell.getOtherEndCell();
 	}
 		
 	
-	//Gestion des cases occupées et directions utilisées
 	public void addCell(Cell newCell) {
+		newCell.setPath(this);
 		this.occupiedCells.add(newCell);
 	}
 	
 
-	//"Nettoyage" de la ligne, si on la reprend de 0
+	//Clear l'entiéreré du path
 	public void clear() {
 		for (Cell cell : occupiedCells) {
 			//On signale aux cases qu'on les vide
 			cell.setPath(null);
 		}
 		occupiedCells.clear();	
+		tag.setIsComplete(false);
 	}
 	
 	
@@ -75,7 +76,7 @@ public class Path {
 		for (Cell otherCell : occupiedCells) {
 			if (otherCell == cell) {
 				break;
-			}
+			}	
 			nbCellsBefore ++;
 		}
 		
@@ -86,40 +87,61 @@ public class Path {
 		
 		//et on modifie la liste de cellules du path
 		this.occupiedCells = new ArrayList<Cell>(occupiedCells.subList(0, nbCellsBefore));
-	}
-	
-	public void tagComplete() {
-		tag.setIsComplete(true);
-	}
-	public ArrayList<Cell> getoccupiedCells() {
-		return occupiedCells;
-	}
-
-	public Cell getFutureLastCell() {
-		if (occupiedCells.get(0) == tag.getEnds()[0]) {
-			return tag.getEnds()[1];				
-		};
-		return tag.getEnds()[0];
+		tag.setIsComplete(false);
 	}
 	
 	
-	public Cell getLastCell() {
-		return occupiedCells.get(occupiedCells.size()-1); 
+	public void tagIsComplete(boolean bool) {
+		tag.setIsComplete(bool);
 	}
+		
 	
 	public Cell getFirstCell() {
 		return occupiedCells.get(0);
 	}
+	
 	
 	public void setStart(Cell cell) {
 		this.clear(); 
 		occupiedCells.set(0, cell);
 		}
 
+	
 	public Tag getTag() {
 		return tag;
 	}
-				
+	
+	public Direction[] getDirections() {
+		//transforme la liste de cells du path en une liste de direction
+		if (occupiedCells.size() == 0) {return null;}
+		Direction[] directions = new Direction[occupiedCells.size() - 1];
+		System.out.println("Occupied cells: "+ occupiedCells);
+		for (int k = 0; k < occupiedCells.size() -  1; k++) {
+			int j0 = occupiedCells.get(k).getPos()[1];
+			int i0 = occupiedCells.get(k).getPos()[0];
+			int j1 = occupiedCells.get(k+1).getPos()[1];
+			int i1 = occupiedCells.get(k+1).getPos()[0];
+			// Compliqué de faire un case ici, on trouve cela plus simple de faire des if. 
+			if (j1-j0 == 1) {
+				directions[k] = Direction.RIGHT;
+			}
+			if (j1-j0 == -1) {
+				directions[k] = Direction.LEFT; 	
+			}
+			if (i1-i0 == -1) {
+				directions[k] = Direction.UP;
+			}
+			if (i1-i0 == 1) {
+				directions[k] = Direction.DOWN; 
+			}
+		}
+		return directions;	
+		
+	}
+	
+	public boolean getIsComplete() {
+		return tag.getIsComplete();
+	}
 	
 }
 	

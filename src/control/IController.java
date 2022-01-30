@@ -1,5 +1,5 @@
 package control;
-
+import model.Tag;
 
 /*
  * **********************
@@ -110,47 +110,11 @@ public interface IController {
      * @return le nombre d'étiquettes de la grille à afficher
      */
     int getNbTags();
+    
+    int[][][] getEndsPos();
 
-    /**
-     * Méthode appellée par l'IHM pour obtenir la position de 
-     * départ du chemin correspondant à une étiquette donnée.
-     * 
-     * @param tag identifie l'étiquette du chemin dont l'IHM demande 
-     *            la position de départ
-     * @return un tableau de 2 entiers [ligne, colonne] donnant la
-     *         position de départ du chemin associé à l'étiquette
-     *         indiquée. S'il n'y a pas encore de chemin pour cette 
-     *         étiquette, la position de l'une des extrémités de cette 
-     *         étiquette.
-     */
-    int[] getStartPathPosition( int tag );
-
-    /**
-     * Méthode appellée par l'IHM pour obtenir la position de 
-     * la seconde extrémité de l'étiquette donnée. La seconde 
-     * extrémité est celle qui n'est pas retournée par {@link 
-     * #getStartPathPosition(int) getStartPathPosition(int)}
-     * 
-     * @param tag identifie l'étiquette dont l'IHM demande 
-     *            la seconde extrémité
-     * @return un tableau de 2 entiers [ligne, colonne] donnant la
-     *         position de la seconde extrémité de cette étiquette (la 
-     *         première est retournée par {@link #getStartPathPosition(int)
-     *         getStartPathPosition(int)}.
-     */
-    int[] getSecondEndPosition( int tag );
-
-    /**
-     * Méthode appellée par l'IHM pour obtenir le tracé d'un chemin
-     * sur la grille.
-     * 
-     * @param tag identifie l'étiquette du chemin cherché. 
-     * @return un tableau de valeurs de l'énumération Direction.
-     *         Le point de départ du chemin est celui donné par 
-     *         {@link #getStartPathPosition(int)
-     *         getStartPathPosition(int)}.
-     */
-    Direction[] getDirections( int tag );
-
+	int[][][] getEndsPosList();
+	int[] getPosFirstEnd(int[] pos);
+	Direction[] getDirections(int[] pos);
 }
 

@@ -1,12 +1,16 @@
 package model;
 import java.util.ArrayList;
+import control.Controller;
 import java.util.List;
 
 public class Tag {
-	private String name;
+	private int number;
 	private Path path;
-	private End end1, end2;
+	private End end1;
+	private End end2;
 	private boolean isComplete;
+	private Grid grid;
+	
 	
 	public  Cell[] getEnds() {
 		Cell[] Ends = new Cell[2];
@@ -19,47 +23,38 @@ public class Tag {
 		return (end1 == end ? end2 : end1);
 	}
 	
-	
-	public End getEnd1() {
-		return end1;
-	}
-
-	public void setEnd1(End end1) {
-		this.end1 = end1;
-	}
-
-	public End getEnd2() {
-		return end2;
-	}
-
-	public void setEnd2(End end2) {
-		this.end2 = end2;
-	}
-
 	public Path getPath() {
 		return path;
 	}
 
-	public void setPath(Path path) {
-		this.path = path;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 	public void setIsComplete(boolean bool) {
-		this.isComplete = bool;
+		grid.setTagIsComplete(this, bool);
 	}
-
+	
+	public boolean getIsComplete() {
+		return grid.getTagIsComplete(this);
+	}
 	public Path clearPath() {
+		//supprime le contenu du path et actualise le tag.
 		if(path != null) {
-			path.clear(); 
+			path.clear();
 		}
+		end1.clearPath();
+		end2.clearPath();
+		isComplete = false;
 		return path;
+	}
+	
+	public void setEnd1(End end) {
+		end1=end;
+	}
+	
+	public void setEnd2(End end) {
+		end2=end;
+	}
+	
+	public void setGrid(Grid grid) {
+		this.grid = grid;
 	}
 }
 	

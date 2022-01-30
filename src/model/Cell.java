@@ -18,43 +18,24 @@ public class Cell {
 		return path;
 	}
 
-	public void setPath(Path path) {
-		this.path = path;
-	}
-
-	public End getEnd() {
-		return end;
-	}
-
-	public void setEnd(End end) {
-		this.end = end;
-	}
-
-	public Grid getGrid() {
-		return grid;
-	}
-
-	public void setGrid(Grid grid) {
-		this.grid = grid;
-	}
-	
-
 	public Path startPathAtCell() {
-		//3 cas : case avec un path, end sans path, case vide
+		//3 cas : case avec un path, end, case vide
+		if (end != null) {
+			end.clearPathOfTag();
+			//si on clique sur des extrémités
+			if (path == null ) {
+				path = new Path(this);
+			}
+		}
 		if (path != null) {
+			Path pathTemp = path;
+			System.out.println("Path temp = " +path);
 			//on cut le path à partir de cette cellule (donc cette cellule perd son path)
 			path.clearFrom(this);
+			System.out.println("Après clea, path = "+path);
 			//et on rajoute à nouveau son path
-			this.path = path;
-		}
-		else {
-			if (end != null) {
-				//si on clique sur des extrémités
-				path = end.clearPathOfTag();
-				if (path == null) {
-					path = new Path(this);
-				}
-			}
+			pathTemp.addCell(this);
+			System.out.println("apres ajout final = "+ path);
 		}
 		return path;	
 	}
@@ -76,22 +57,51 @@ public class Cell {
 		System.out.println("Pas de path");
 		return null;
 	}
-	public void tagComplete() {
-		path.tagComplete();
-	}
 	
-	public boolean isAllowedFrom(Cell cellBefore) {
+	public boolean isTagComplete() {
+		return path!=null && path.getIsComplete();
+	}
+
+	//méthode permettant de changer le path d'une cell au path d'une cell en paramètre, retournant si cela est possible
+	//cela est impossible uniquement si c'est un end qui n'est pas le end qui permet de finir le tag
+	public void changePathTo(Cell cellBefore) {
+		Path futurePath = cellBefore.getPath();
 		if (end == null) {
-			return true;
+			if (path != null) {path.clearFrom(this);}
+			futurePath.addCell(this);
 		} else {
 			if (this == cellBefore.getFinishingCell()) {
-				cellBefore.tagComplete();
-				return true;
+				futurePath.tagIsComplete(true);
+				futurePath.addCell(this);
 			}
 		}
-		return false;
+	}
+
+	public int[] getPos(){
+		return grid.getPosition(this);
 	}
 	
-
+	public End getEnd() {
+		return end;
+	}
 	
+	public Direction[] getDirectionsOfPath() {
+		if (path == null) {return null;}
+		return path.getDirections();
+	}
+
+	public void setEnd(End end) {
+		this.end = end;
+	}
+	
+	public void setPath(Path path) {
+		this.path = path;
+	}
+	
+	public int[] getPosFirstEnd() {
+		if (path != null) {
+			return grid.getPosition(path.getFirstCell());
+		}
+		return null;
+	}
 }

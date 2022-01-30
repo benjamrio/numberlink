@@ -1,23 +1,44 @@
 package model;
 import model.Cell;
+import model.Tag;
+import model.End;
 import control.Controller;
 import control.Direction;
+import java.util.Map;
+import java.util.HashMap;
 public class Grid {
 	private int nbLines;
 	private int nbCols;
 	private Cell[][] cells;
 	private Controller controller;
+	private Map<Tag, Boolean> tagIsComplete = new HashMap<Tag, Boolean>();
 	
 	
-	public Grid(int nbLines, int nbCols) {
+	public Grid(int nbLines, int nbCols, Map<Tag, int[][]> tagEndsPos) {
 		this.nbLines = nbLines;
 		this.nbCols = nbCols;
 		int i, j;
+		cells = new Cell[nbLines][nbCols];
 		for (i=0; i < nbLines; i++) {
 			for (j=0; j < nbCols; j++) {
-				this.cells[i][j] = new Cell(this);
+				cells[i][j] = new Cell(this);
 			}
 		}
+		for (var entry : tagEndsPos.entrySet()) {
+			int[][] endPair = entry.getValue();
+			Tag tag = entry.getKey();
+			tag.setGrid(this);
+			for (i=0; i < 2; i++) {
+				Cell cell = cells[endPair[i][0]][endPair[i][1]];
+				End end = new End(cell, tag);
+				cell.setEnd(end);
+				if (i == 0) {tag.setEnd1(end);} else {tag.setEnd2(end);}
+				tagIsComplete.put(tag, false);
+			}
+		}
+
+		System.out.println("Grid is initialized!");
+		 
 	}
 	
 	
@@ -57,14 +78,20 @@ public class Grid {
 		//vérification de l'intégrité géométrique (dans la grille)
 		if (0<=i && i<nbLines && 0<=j && j<nbCols) {
 			//vérification de l'intégrité sémantique (pas une end "interdite")
-			if (nextCell.isAllowedFrom(cell)) {
-				return nextCell;
-			} 
+			nextCell.changePathTo(cell);
+			return nextCell;
 		}
 		return null;
 	}
 	
 	
+	public Direction[] getDirections(int[] pos) {
+		return getCellAt(pos[0], pos[1]).getDirectionsOfPath();
+	}
+	
+	public boolean isComplete() {
+		return !tagIsComplete.containsValue(false);
+	}
 	
 	public Cell getCellAt(int i, int j) {
 		return cells[i][j];
@@ -74,33 +101,24 @@ public class Grid {
 		return nbLines;
 	}
 	
-	public void setNbLines(int nbLines) {
-		this.nbLines = nbLines;
-	}
-
 	public int getNbCols() {
 		return nbCols;
 	}
 
-	public void setNbCols(int nbCols) {
-		this.nbCols = nbCols;
-	}
 
-	public Cell[][] getCells() {
-		return cells;
-	}
-
-	public void setCells(Cell[][] cells) {
-		this.cells = cells;
-	}
-
-	public Controller getController() {
-		return controller;
-	}
-
-	public void setController(Controller controller) {
-		this.controller = controller;
+	public Map<Tag, Boolean> getTagIsComplete() {
+		return tagIsComplete;
+	}	
+	
+	public int[] getPosFirstEnd(int[] pos){
+		return getCellAt(pos[0], pos[1]).getPosFirstEnd();
 	}
 	
+	public void setTagIsComplete(Tag tag, boolean bool) {
+		tagIsComplete.put(tag, bool);
+	}
 	
+	public boolean getTagIsComplete(Tag tag) {
+		return tagIsComplete.get(tag);
+	}
 }

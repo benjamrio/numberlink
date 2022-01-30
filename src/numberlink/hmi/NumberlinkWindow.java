@@ -7,8 +7,8 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import numberlink.control.Direction;
-import numberlink.control.IController;
+import control.Direction;
+import control.IController;
 
 /**
  * Fenêtre de l'IHM pour le jeu Numberlink
@@ -64,7 +64,7 @@ public class NumberlinkWindow extends JFrame implements KeyListener {
         if( direction == null ) return;
         if( controller.action( direction )) {
             repaint();
-            JOptionPane.showMessageDialog( this, "Vous avez gagné !" );
+            JOptionPane.showMessageDialog( this, "Vous avez gagn� !" );
             System.exit( 0 );
         }
         repaint();

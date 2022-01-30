@@ -36,10 +36,10 @@ public class NumberlinkPanel extends JPanel implements MouseListener {
 
     /**
      * Initialise le panneau d'affichage du jeu.
-     * Le panneau est responsable de l'affichage de l'Ã©tat du jeu et
-     * de la transmission au contrÃ´leur des cases cliquÃ©es.
+     * Le panneau est responsable de l'affichage de l'état du jeu et
+     * de la transmission au contrôleur des cases cliquées.
      * 
-     * @param controller le contrÃ´leur qu'il faut informer des clics de
+     * @param controller le contrôleur qu'il faut informer des clics de
      *                   l'utilisateur dans les cases du jeu
      */
     public NumberlinkPanel( IController controller ) {
@@ -64,8 +64,8 @@ public class NumberlinkPanel extends JPanel implements MouseListener {
         
         if( firstDisplay ) computeParameters();
 
-        // Le cÃ´tÃ© mÃ©tier raisonne en [ligne, colonne]
-        // Le cÃ´tÃ© IHM raisonne en [x, y]
+        // Le côté métier raisonne en [ligne, colonne]
+        // Le côté IHM raisonne en [x, y]
         // Donc x <=> colonne et y <=> ligne
         for( int i = 0; i <= controller.getNbLines(); ++i ) {
             g.drawLine( 0, i * cellSize, controller.getNbColumns() * cellSize, i * cellSize );
@@ -74,39 +74,36 @@ public class NumberlinkPanel extends JPanel implements MouseListener {
             g.drawLine( j * cellSize, 0, j * cellSize, controller.getNbLines() * cellSize );
         }
 
+        int[][][] endsPos = controller.getEndsPos();
         for( int tag = 0; tag < controller.getNbTags(); ++tag ) {
             setColorForTag( g, tag );
-            // Affichage de la premiÃ¨re extrÃ©mitÃ©
-            int[] startPos = controller.getStartPathPosition( tag );
-            g.fillOval( startPos[1] * cellSize + halfRadius,
-                    startPos[0] * cellSize + halfRadius,
-                    endDiameter, endDiameter );
-            // DÃ©coration de l'extrÃ©mitÃ© si elle est sÃ©lectionnÃ©e
-            if( Arrays.equals( startPos, selection )) {
-                showSelectedEnd( g, startPos );
+            // Affichage de la première extrémité
+            for (int end_nb = 0; end_nb < 2; end_nb++) {
+            	int[] pos = endsPos[tag][end_nb];
+            	g.fillOval( pos[1] * cellSize + halfRadius,
+                        pos[0] * cellSize + halfRadius,
+                        endDiameter, endDiameter );
+            	// Décoration de l'extrémité si elle est sélectionnée
+                if( Arrays.equals( pos, selection )) {
+                    showSelectedEnd( g, pos );
+                }
+         
+                Direction[] directions = controller.getDirections(pos);
+                int[] positionOfFirstEnd = controller.getPosFirstEnd(pos);
+                if (directions!= null && positionOfFirstEnd != null) {paintDirections( g, positionOfFirstEnd, directions);}
             }
-            // Affichage de l'Ã©ventuel chemin partant de cette extrÃ©mitÃ©
-            paintDirections( g, startPos, controller.getDirections( tag ));
-            // Affichage de la seconde extrÃ©mitÃ©
-            int[] endPos = controller.getSecondEndPosition( tag );
-            g.fillOval( endPos[1] * cellSize + halfRadius,
-                    endPos[0] * cellSize + halfRadius,
-                    endDiameter, endDiameter );
-            // DÃ©coration de l'extrÃ©mitÃ© si elle est sÃ©lectionnÃ©e
-            if( Arrays.equals( endPos, selection )) {
-                showSelectedEnd( g, endPos );
-            }
+            
         }
     }
 
-	private void showSelectedEnd(Graphics g, int[] startPos) {
+	private void showSelectedEnd(Graphics g, int[] pos) {
 		Color c = g.getColor();
 		g.setColor( Color.BLACK );
 		Graphics2D g2 = ( Graphics2D ) g;
 		Stroke s = g2.getStroke();
 		g2.setStroke( new BasicStroke( SELECTED_WIDTH ));
-		g.drawOval( startPos[1] * cellSize + halfRadius,
-		        startPos[0] * cellSize + halfRadius,
+		g.drawOval( pos[1] * cellSize + halfRadius,
+		        pos[0] * cellSize + halfRadius,
 		        endDiameter, endDiameter );
 		g2.setStroke( s );
 		g.setColor( c );
@@ -162,14 +159,17 @@ public class NumberlinkPanel extends JPanel implements MouseListener {
             case 9  -> Color.GRAY;
             case 10 -> Color.DARK_GRAY;
             case 11 -> Color.BLACK;
-            default -> throw new IllegalArgumentException( "L'IHM ne peut pas afficher plus de 12 Ã©tiquettes diffÃ©rentes" );
+            default -> throw new IllegalArgumentException( "L'IHM ne peut pas afficher plus de 12 étiquettes différentes" );
         } );
     }
 
     @Override
     public void mouseClicked( MouseEvent e ) {
+
+        System.out.println(e.getPoint());
         if( controller.clickCell( e.getPoint().y / cellSize, e.getPoint().x / cellSize )) {
             selection = new int[] { e.getPoint().y / cellSize, e.getPoint().x / cellSize };
+
         }
         repaint();
     }
