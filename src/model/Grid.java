@@ -74,10 +74,11 @@ public class Grid {
 			case LEFT : j=j-1; break;
 			default : break;
 		}
-		Cell nextCell = cells[i][j];
 		//vérification de l'intégrité géométrique (dans la grille)
 		if (0<=i && i<nbLines && 0<=j && j<nbCols) {
 			//vérification de l'intégrité sémantique (pas une end "interdite")
+
+			Cell nextCell = cells[i][j];
 			nextCell.changePathTo(cell);
 			return nextCell;
 		}
