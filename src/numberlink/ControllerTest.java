@@ -3,12 +3,16 @@ package numberlink;
 import javax.swing.SwingUtilities;
 
 import control.Controller;
-import numberlink.hmi.NumberlinkWindow;
+import hmi.NumberlinkWindow;
 
 /**
- * Programme de test de l'IHM en utilisant le controller bouchon
+ * Programme de test de l'IHM en utilisant le controller Controller
+ * Les paramètres utiles : positions des paires de end sont modifiables facilement dans la liste 
+ * endsPos de la méthode run.
  * 
  * @author Dominique Marcadet
+ * @author Noé Bopp
+ * @author Benjamin Rio
  * @version 1.2
  *
  */

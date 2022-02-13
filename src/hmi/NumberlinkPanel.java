@@ -1,4 +1,4 @@
-package numberlink.hmi;
+package hmi;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -18,6 +18,8 @@ import control.IController;
  * Panneau de l'IHM pour le jeu Numberlink
  * 
  * @author Dominique Marcadet
+ * @author Noé Bopp
+ * @author Benjamin Rio
  * @version 1.2
  *
  */
@@ -74,20 +76,22 @@ public class NumberlinkPanel extends JPanel implements MouseListener {
             g.drawLine( j * cellSize, 0, j * cellSize, controller.getNbLines() * cellSize );
         }
 
-        int[][][] endsPos = controller.getEndsPos();
+        int[][][] endsPos = controller.getEndsPositions();
         for( int tag = 0; tag < controller.getNbTags(); ++tag ) {
             setColorForTag( g, tag );
-            // Affichage de la première extrémité
+            // Affichage des deux extrémités (rôles symétriques)
             for (int end_nb = 0; end_nb < 2; end_nb++) {
             	int[] pos = endsPos[tag][end_nb];
             	g.fillOval( pos[1] * cellSize + halfRadius,
                         pos[0] * cellSize + halfRadius,
                         endDiameter, endDiameter );
             	// Décoration de l'extrémité si elle est sélectionnée
+       
                 if( Arrays.equals( pos, selection )) {
                     showSelectedEnd( g, pos );
                 }
-         
+                //afin de ne pas afficher les directions à partir d'un mauvais end
+                //on récupère la position du "début" du path
                 Direction[] directions = controller.getDirections(pos);
                 int[] positionOfFirstEnd = controller.getPosFirstEnd(pos);
                 if (directions!= null && positionOfFirstEnd != null) {paintDirections( g, positionOfFirstEnd, directions);}
@@ -166,7 +170,7 @@ public class NumberlinkPanel extends JPanel implements MouseListener {
     @Override
     public void mouseClicked( MouseEvent e ) {
 
-        System.out.println(e.getPoint());
+        System.out.println("Click enregistré à x=" + e.getPoint().x + " , y="+e.getPoint().y );
         if( controller.clickCell( e.getPoint().y / cellSize, e.getPoint().x / cellSize )) {
             selection = new int[] { e.getPoint().y / cellSize, e.getPoint().x / cellSize };
 

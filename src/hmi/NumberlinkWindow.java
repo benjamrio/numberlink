@@ -1,4 +1,4 @@
-package numberlink.hmi;
+package hmi;
 
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
@@ -11,7 +11,7 @@ import control.Direction;
 import control.IController;
 
 /**
- * FenÃªtre de l'IHM pour le jeu Numberlink
+ * Fenêtre de l'IHM pour le jeu Numberlink
  * 
  * @author Dominique Marcadet
  * @version 1.2
@@ -25,13 +25,13 @@ public class NumberlinkWindow extends JFrame implements KeyListener {
     private IController controller;
 
     /**
-     * Initialise la fenÃªtre du jeu.
-     * La fenÃªtre dÃ©lÃ¨gue Ã  un panneau l'affichage de l'Ã©tat du jeu.
-     * Elle est responsable des dimensions globales de la fenÃªtre au dÃ©part et
-     * de la transmission au contrÃ´leur des appuis sur les flÃ¨ches du clavier.
+     * Initialise la fenêtre du jeu.
+     * La fenêtre délègue à un panneau l'affichage de l'état du jeu.
+     * Elle est responsable des dimensions globales de la fenêtre au départ et
+     * de la transmission au contrôleur des appuis sur les flèches du clavier.
      * 
-     * @param controller le contrÃ´leur qu'il faut informer des appuis par
-     *                   l'utilisateur des flÃ¨ches du clavier
+     * @param controller le contrôleur qu'il faut informer des appuis par
+     *                   l'utilisateur des flèches du clavier
      */
     public NumberlinkWindow( IController controller ) {
         this.controller = controller;
@@ -62,6 +62,7 @@ public class NumberlinkWindow extends JFrame implements KeyListener {
             default                -> null;
         };
         if( direction == null ) return;
+        System.out.println("Enregistrement direction " + direction);
         if( controller.action( direction )) {
             repaint();
             JOptionPane.showMessageDialog( this, "Vous avez gagné !" );
