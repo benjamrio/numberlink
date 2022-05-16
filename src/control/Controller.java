@@ -52,7 +52,6 @@ public class Controller implements IController{
 
 	@Override
 	public int getNbTags() {
-		// TODO Auto-generated method stub
 		return endsPositions.length;
 	}
 
