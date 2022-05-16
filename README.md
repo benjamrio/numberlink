@@ -7,5 +7,5 @@ To run the game, clone this repository and run the file ControllerTest.java. Fro
 Designed using UML, to follow SOLID principles.<br>
 ![class_diagram](images/class_diagram.png)
 
-One of the sequence conceived diagrams.
+One of the conceived sequence diagrams.
 ![sequence diagram](images/sequence_diagram.png)
